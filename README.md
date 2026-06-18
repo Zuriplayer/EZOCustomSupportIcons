@@ -1,33 +1,29 @@
 # EZOCustomSupportIcons
 
-Addon-pack de la familia EZO para registrar iconos personalizados en `OdySupportIcons`.
+Addon de la familia EZO para mostrar iconos personalizados sobre jugadores concretos y en el roster de guild.
 
-Este addon no modifica `OdySupportIcons`. Solo carga rutas de iconos `.dds` y las registra mediante las APIs publicas expuestas por Ody:
-
-- `OSI.AddCustomIconPack(icons)`
-- `OSI.AddUniqueIconPack(icons)`
+No depende de `OdySupportIcons`, no usa su catalogo de iconos y no modifica otros addons.
 
 ## Uso
 
 1. Coloca los `.dds` en `icons/`.
-2. Anade sus rutas a `CUSTOM_ICONS` en `EZOCustomSupportIcons.lua`.
+2. Asocia cada cuenta en la tabla `ICONS` de `EZOCustomSupportIcons.lua`.
 3. Recarga la UI.
-4. En grupo, lista de amigos o roster de guild, clic derecho sobre un jugador y selecciona `Assign Custom Icon`.
+4. En grupo, el icono aparece sobre los jugadores configurados.
+5. En el roster de guild, el icono aparece sobre el indicador de estado de las cuentas configuradas.
+
+## Ajustes
+
+En `Settings > Addons > EZOCustomSupportIcons`:
+
+- `Show head icons`: activa o desactiva los iconos sobre la cabeza para todas las cuentas configuradas.
+- `Head icon size`: ajusta el tamano de esos iconos para todas las cuentas configuradas.
 
 Ejemplo:
 
 ```lua
-local CUSTOM_ICONS = {
-    "EZOCustomSupportIcons/icons/zuri.dds",
-    "EZOCustomSupportIcons/icons/healer.dds",
-}
-```
-
-Para asignar un icono automaticamente a una cuenta:
-
-```lua
-local UNIQUE_ICONS = {
-    ["@Zuriplayer"] = "EZOCustomSupportIcons/icons/zuri.dds",
+local ICONS = {
+    ["@zuriplayer"] = "EZOCustomSupportIcons/icons/zuriplayer.dds",
 }
 ```
 
@@ -37,6 +33,10 @@ local UNIQUE_ICONS = {
 - Recomendado: `64x64`
 - Anchura y altura divisibles por 4
 - Canal alpha si necesitas transparencia
+
+## Limitaciones
+
+ESO solo expone posicion fiable para miembros del grupo. El renderer se limita a jugadores agrupados y visibles en la misma instancia.
 
 ## Desarrollo
 

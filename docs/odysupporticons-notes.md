@@ -1,19 +1,10 @@
-# OdySupportIcons Notes
+# OdySupportIcons Legacy Notes
 
-APIs usadas:
+Estas notas son historicas. El addon empezo como pack para `OdySupportIcons`, pero ahora es independiente.
 
-```lua
-OSI.AddCustomIconPack({
-    "EZOCustomSupportIcons/icons/example.dds",
-})
-```
+Decision vigente:
 
-```lua
-OSI.AddUniqueIconPack({
-    ["@AccountName"] = "EZOCustomSupportIcons/icons/example.dds",
-})
-```
-
-`AddCustomIconPack` anade iconos al selector manual de OdySupportIcons.
-
-`AddUniqueIconPack` asigna automaticamente un icono a una cuenta concreta si la opcion de unique icons esta activa en OdySupportIcons.
+- No depender de `OdySupportIcons`.
+- No llamar APIs `OSI.*`.
+- No consumir el catalogo de iconos de `OdySupportIcons`.
+- Mantener los iconos propios en `icons/` y asociarlos desde `EZOCustomSupportIcons.lua`.
