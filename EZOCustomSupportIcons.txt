@@ -1,0 +1,10 @@
+## Title: E|cB040FFZ|rOCustomSupportIcons
+## Author: @Zuriplayer
+## Description: Custom icon pack scaffold for OdySupportIcons.
+## Version: 0.1.0
+## AddOnVersion: 10000
+## APIVersion: 101049 101050
+## DependsOn: OdySupportIcons
+
+modules/core.lua
+EZOCustomSupportIcons.lua
