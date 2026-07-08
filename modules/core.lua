@@ -2,5 +2,5 @@
 EZOCustomSupportIcons = EZOCustomSupportIcons or {}
 
 EZOCustomSupportIcons.ADDON_NAME    = "EZOCustomSupportIcons"
-EZOCustomSupportIcons.ADDON_VERSION = "0.3.1"
+EZOCustomSupportIcons.ADDON_VERSION = "0.3.4"
 EZOCustomSupportIcons.AUTHOR        = "@Zuriplayer"

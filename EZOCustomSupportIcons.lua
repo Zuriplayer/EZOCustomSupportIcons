@@ -5,6 +5,7 @@ local ADDON_NAME = "EZOCustomSupportIcons"
 local UPDATE_MS = 10
 local DEFAULTS = {
     headIconsEnabled = true,
+    hideHeadIconsInCombat = false,
     headIconSize = 96,
 }
 local ICON_OFFSET_M = 2.8
@@ -12,11 +13,44 @@ local FADE_DISTANCE_M = 7.5
 local ICONS = {
     ["@zuriplayer"] = "EZOCustomSupportIcons/icons/zuriplayer.dds",
 }
+local TACTICAL_MARKERS = {
+    {
+        id = "follow",
+        label = "Follow",
+        texture = "esoui/art/icons/mapkey/mapkey_groupleader.dds",
+    },
+    {
+        id = "heal",
+        label = "Heal",
+        texture = "esoui/art/lfg/gamepad/lfg_roleicon_healer.dds",
+    },
+    {
+        id = "tank",
+        label = "Tank",
+        texture = "esoui/art/lfg/gamepad/lfg_roleicon_tank.dds",
+    },
+    {
+        id = "focus",
+        label = "Focus",
+        texture = "esoui/art/lfg/gamepad/lfg_roleicon_dps.dds",
+    },
+    {
+        id = "mechanic",
+        label = "Mechanic",
+        texture = "esoui/art/icons/mapkey/mapkey_groupboss.dds",
+    },
+}
+local TACTICAL_MARKER_BY_ID = {}
+
+for _, marker in ipairs(TACTICAL_MARKERS) do
+    TACTICAL_MARKER_BY_ID[marker.id] = marker
+end
 
 local wm = WINDOW_MANAGER
 local renderControl
 local iconWindow
 local iconPool = {}
+local tacticalAssignments = {}
 
 local function GetSettings()
     ADDON.sv = ADDON.sv or DEFAULTS
@@ -27,16 +61,142 @@ local function AreHeadIconsEnabled()
     return GetSettings().headIconsEnabled ~= false
 end
 
+local function IsHudSceneShowing()
+    return SCENE_MANAGER
+        and (SCENE_MANAGER:IsShowing("hud") or SCENE_MANAGER:IsShowing("hudui"))
+end
+
+local function ShouldHideHeadIconsInCombat()
+    return GetSettings().hideHeadIconsInCombat == true
+end
+
 local function GetHeadIconSize()
     return tonumber(GetSettings().headIconSize) or DEFAULTS.headIconSize
 end
 
-local function GetIconForDisplayName(displayName)
+local function NormalizeDisplayName(displayName)
     if type(displayName) ~= "string" or displayName == "" then
         return nil
     end
 
-    return ICONS[string.lower(displayName)]
+    return string.lower(displayName)
+end
+
+local function GetIconForDisplayName(displayName)
+    local normalizedName = NormalizeDisplayName(displayName)
+    if not normalizedName then
+        return nil
+    end
+
+    return ICONS[normalizedName]
+end
+
+local function GetTacticalMarkerForDisplayName(displayName)
+    if not IsUnitGrouped("player") then
+        return nil
+    end
+
+    local normalizedName = NormalizeDisplayName(displayName)
+    if not normalizedName then
+        return nil
+    end
+
+    return TACTICAL_MARKER_BY_ID[tacticalAssignments[normalizedName]]
+end
+
+local function GetTacticalMarkerTextureForDisplayName(displayName)
+    local marker = GetTacticalMarkerForDisplayName(displayName)
+    return marker and marker.texture or nil
+end
+
+local function IsDisplayNameInCurrentGroup(displayName)
+    local normalizedName = NormalizeDisplayName(displayName)
+    if not normalizedName or not IsUnitGrouped("player") then
+        return false
+    end
+
+    if NormalizeDisplayName(GetUnitDisplayName("player")) == normalizedName then
+        return true
+    end
+
+    for i = 1, GROUP_SIZE_MAX do
+        local unitTag = "group" .. i
+        if DoesUnitExist(unitTag) and NormalizeDisplayName(GetUnitDisplayName(unitTag)) == normalizedName then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function RefreshGroupLists()
+    if GROUP_LIST and GROUP_LIST.RefreshData then
+        GROUP_LIST:RefreshData()
+    end
+
+    if GROUP_LIST_GAMEPAD then
+        if GROUP_LIST_GAMEPAD.RefreshData then
+            GROUP_LIST_GAMEPAD:RefreshData()
+        elseif GROUP_LIST_GAMEPAD.RefreshList then
+            GROUP_LIST_GAMEPAD:RefreshList()
+        end
+    end
+end
+
+local function PruneTacticalAssignments()
+    if not IsUnitGrouped("player") then
+        tacticalAssignments = {}
+        RefreshGroupLists()
+        return
+    end
+
+    local activeNames = {}
+    local playerDisplayName = NormalizeDisplayName(GetUnitDisplayName("player"))
+    if playerDisplayName then
+        activeNames[playerDisplayName] = true
+    end
+
+    for i = 1, GROUP_SIZE_MAX do
+        local unitTag = "group" .. i
+        if DoesUnitExist(unitTag) then
+            local displayName = NormalizeDisplayName(GetUnitDisplayName(unitTag))
+            if displayName then
+                activeNames[displayName] = true
+            end
+        end
+    end
+
+    local changed = false
+    for displayName in pairs(tacticalAssignments) do
+        if not activeNames[displayName] then
+            tacticalAssignments[displayName] = nil
+            changed = true
+        end
+    end
+
+    if changed then
+        RefreshGroupLists()
+    end
+end
+
+local function SetTacticalMarker(displayName, markerId)
+    local normalizedName = NormalizeDisplayName(displayName)
+    if not normalizedName or not TACTICAL_MARKER_BY_ID[markerId] or not IsDisplayNameInCurrentGroup(displayName) then
+        return
+    end
+
+    tacticalAssignments[normalizedName] = markerId
+    RefreshGroupLists()
+end
+
+local function ClearTacticalMarker(displayName)
+    local normalizedName = NormalizeDisplayName(displayName)
+    if not normalizedName then
+        return
+    end
+
+    tacticalAssignments[normalizedName] = nil
+    RefreshGroupLists()
 end
 
 local function GetOrCreateIcon(unitTag)
@@ -75,8 +235,17 @@ local function CanShowPlayer()
     return DoesUnitExist("player") and IsUnitPlayer("player")
 end
 
+local function ShouldShowHeadIconForUnit(unitTag)
+    if not ShouldHideHeadIconsInCombat() or not IsUnitInCombat("player") then
+        return true
+    end
+
+    return IsUnitDead(unitTag)
+end
+
 local function GetConfiguredTexture(unitTag)
-    return GetIconForDisplayName(GetUnitDisplayName(unitTag))
+    local displayName = GetUnitDisplayName(unitTag)
+    return GetTacticalMarkerTextureForDisplayName(displayName) or GetIconForDisplayName(displayName)
 end
 
 local function ProjectUnit(unitTag, texture, camera)
@@ -144,6 +313,10 @@ end
 function ADDON.OnUpdate()
     HideAllIcons()
 
+    if not IsHudSceneShowing() then
+        return
+    end
+
     if not AreHeadIconsEnabled() then
         return
     end
@@ -151,7 +324,7 @@ function ADDON.OnUpdate()
     local playerTexture = GetConfiguredTexture("player")
     local camera = GetCamera()
 
-    if playerTexture and CanShowPlayer() then
+    if playerTexture and CanShowPlayer() and ShouldShowHeadIconForUnit("player") then
         ProjectUnit("player", playerTexture, camera)
     end
 
@@ -161,7 +334,7 @@ function ADDON.OnUpdate()
 
     for i = 1, GROUP_SIZE_MAX do
         local unitTag = "group" .. i
-        if not AreUnitsEqual("player", unitTag) and CanShowUnit(unitTag) then
+        if not AreUnitsEqual("player", unitTag) and CanShowUnit(unitTag) and ShouldShowHeadIconForUnit(unitTag) then
             local texture = GetConfiguredTexture(unitTag)
             if texture then
                 ProjectUnit(unitTag, texture, camera)
@@ -226,7 +399,120 @@ function ADDON.RegisterSettingsPanel()
                 return not AreHeadIconsEnabled()
             end,
         },
+        {
+            type = "checkbox",
+            name = "Hide head icons in combat",
+            tooltip = "Hide configured head icons while you are in combat. Dead players stay visible so they can be located.",
+            getFunc = function()
+                return ShouldHideHeadIconsInCombat()
+            end,
+            setFunc = function(value)
+                GetSettings().hideHeadIconsInCombat = value
+                if value and IsUnitInCombat("player") then
+                    HideAllIcons()
+                end
+            end,
+            default = DEFAULTS.hideHeadIconsInCombat,
+            disabled = function()
+                return not AreHeadIconsEnabled()
+            end,
+        },
     })
+end
+
+function ADDON.RegisterGroupContextMenu()
+    local LCM = LibCustomMenu
+    if not LCM or ADDON.groupContextMenuRegistered then
+        return
+    end
+
+    ADDON.groupContextMenuRegistered = true
+
+    local function AddItems(data)
+        local displayName = data and data.displayName
+        if not IsDisplayNameInCurrentGroup(displayName) then
+            return
+        end
+
+        for _, marker in ipairs(TACTICAL_MARKERS) do
+            AddCustomMenuItem("EZO marker: " .. marker.label, function()
+                SetTacticalMarker(displayName, marker.id)
+            end)
+        end
+
+        if GetTacticalMarkerForDisplayName(displayName) then
+            AddCustomMenuItem("EZO marker: Clear", function()
+                ClearTacticalMarker(displayName)
+            end)
+        end
+    end
+
+    LCM:RegisterGroupListContextMenu(AddItems, LCM.CATEGORY_LATE)
+end
+
+function ADDON.HookGroupList()
+    if not GROUP_LIST or not GROUP_LIST.SetupGroupEntry or ADDON.groupListHooked then
+        return
+    end
+
+    ADDON.groupListHooked = true
+
+    local setupGroupEntry = GROUP_LIST.SetupGroupEntry
+    function GROUP_LIST:SetupGroupEntry(control, data)
+        setupGroupEntry(self, control, data)
+
+        local texture = GetTacticalMarkerTextureForDisplayName(data and data.displayName)
+        local icon = control and control.leaderIcon
+        if not texture or not icon then
+            return
+        end
+
+        icon:SetTexture(texture)
+        icon:SetDesaturation(data.online and 0 or 1)
+        icon:SetColor(1, 1, 1, 1)
+        icon:SetHidden(false)
+    end
+end
+
+function ADDON.HookGamepadGroupList()
+    if not GROUP_LIST_GAMEPAD or not GROUP_LIST_GAMEPAD.SetupRow or ADDON.gamepadGroupListHooked then
+        return
+    end
+
+    ADDON.gamepadGroupListHooked = true
+
+    local setupRow = GROUP_LIST_GAMEPAD.SetupRow
+    function GROUP_LIST_GAMEPAD:SetupRow(control, data, selected)
+        setupRow(self, control, data, selected)
+
+        local texture = GetTacticalMarkerTextureForDisplayName(data and data.displayName)
+        if not texture then
+            return
+        end
+
+        local nameControl = control and control:GetNamedChild("DisplayName")
+        if nameControl then
+            nameControl:SetText(zo_iconTextFormat(texture, 32, 32, ZO_FormatUserFacingDisplayName(data.displayName)))
+        end
+    end
+end
+
+function ADDON.RegisterGroupEvents()
+    local function OnGroupChanged()
+        zo_callLater(PruneTacticalAssignments, 100)
+    end
+
+    if EVENT_GROUP_UPDATE then
+        EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "GroupUpdate", EVENT_GROUP_UPDATE, OnGroupChanged)
+    end
+
+    if EVENT_GROUP_MEMBER_JOINED then
+        EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "GroupMemberJoined", EVENT_GROUP_MEMBER_JOINED, OnGroupChanged)
+    end
+
+    if EVENT_GROUP_MEMBER_LEFT then
+        EVENT_MANAGER:RegisterForEvent(ADDON_NAME .. "GroupMemberLeft", EVENT_GROUP_MEMBER_LEFT, OnGroupChanged)
+    end
 end
 
 function ADDON.Initialize()
@@ -245,6 +531,10 @@ function ADDON.Initialize()
 
     EVENT_MANAGER:RegisterForUpdate(ADDON_NAME .. "Update", UPDATE_MS, ADDON.OnUpdate)
     ADDON.RegisterSettingsPanel()
+    ADDON.RegisterGroupContextMenu()
+    ADDON.HookGroupList()
+    ADDON.HookGamepadGroupList()
+    ADDON.RegisterGroupEvents()
 end
 
 function ADDON.HookGuildRoster()

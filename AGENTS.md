@@ -60,4 +60,9 @@ Antes de commit:
 - En guild roster, confirmar que el icono aparece en la cuenta configurada.
 - En LAM, confirmar que `Show head icons` oculta/muestra todos los iconos sobre cabeza.
 - En LAM, confirmar que `Head icon size` cambia el tamano sobre cabeza.
+- En LAM, confirmar que `Hide head icons in combat` oculta iconos en combate excepto unidades muertas.
+- En grupo, asignar un marcador tactico desde el menu contextual de teclado y confirmar que aparece sobre la cabeza y en la lista de grupo.
+- En gamepad, confirmar que la lista de grupo muestra un marcador tactico ya asignado.
+- Confirmar que los marcadores tacticos se limpian al salir del grupo o cuando el jugador marcado deja el grupo.
+- Confirmar que los iconos sobre cabeza se ocultan en mapa, inventario y menus.
 - Confirmar que el addon funciona con `OdySupportIcons` desactivado.
