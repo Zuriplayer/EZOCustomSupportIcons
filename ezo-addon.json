@@ -3,14 +3,14 @@
   "addon": {
     "id": "ezocustomsupporticons",
     "name": "EZOCustomSupportIcons",
-    "version": "0.3.4",
+    "version": "0.3.5",
     "status": "alpha",
     "phase": "independent-renderer",
     "visibility": "private",
     "manifest": "EZOCustomSupportIcons.txt",
     "package": {
       "rootFolderName": "EZOCustomSupportIcons",
-      "zipName": "EZOCustomSupportIcons_v0.3.4.zip",
+      "zipName": "EZOCustomSupportIcons_v0.3.5.zip",
       "outputPath": "dist",
       "include": [
         "*.txt",
@@ -25,6 +25,7 @@
         ".vscode/**",
         "dev/**",
         "docs/**",
+        "packs/**",
         "scripts/**",
         "tests/**",
         "test/**",

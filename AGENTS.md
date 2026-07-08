@@ -20,6 +20,8 @@ Su objetivo es mostrar iconos personalizados propios sobre jugadores concretos s
 - No llamar APIs `OSI.*`.
 - No copiar assets de terceros sin licencia clara.
 - Mantener los `.dds` en `icons/`.
+- Los packs complementarios deben usar `EZOCustomSupportIcons.RegisterIconPack`.
+- Los packs complementarios deben vivir como addons independientes con `DependsOn: EZOCustomSupportIcons`.
 - Si se anade un archivo runtime, anadirlo a `EZOCustomSupportIcons.txt`.
 - Evitar globals innecesarias; usar `EZOCustomSupportIcons = EZOCustomSupportIcons or {}`.
 - Mantener los ajustes en LAM simples y globales salvo peticion explicita.
@@ -62,6 +64,7 @@ Antes de commit:
 - En LAM, confirmar que `Head icon size` cambia el tamano sobre cabeza.
 - En LAM, confirmar que `Hide head icons in combat` oculta iconos en combate excepto unidades muertas.
 - En grupo, asignar un marcador tactico desde el menu contextual de teclado y confirmar que aparece sobre la cabeza y en la lista de grupo.
+- Con un pack complementario instalado, confirmar que sus iconos asignables aparecen en el menu de grupo si el jugador pertenece a la guild configurada.
 - En gamepad, confirmar que la lista de grupo muestra un marcador tactico ya asignado.
 - Confirmar que los marcadores tacticos se limpian al salir del grupo o cuando el jugador marcado deja el grupo.
 - Confirmar que los iconos sobre cabeza se ocultan en mapa, inventario y menus.

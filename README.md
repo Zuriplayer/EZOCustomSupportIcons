@@ -4,6 +4,24 @@ Addon de la familia EZO para mostrar iconos personalizados sobre jugadores concr
 
 No depende de `OdySupportIcons`, no usa su catalogo de iconos y no modifica otros addons.
 
+## Packs complementarios
+
+`EZOCustomSupportIcons` expone una API para packs externos de guild o grupo.
+
+Un pack puede registrar:
+
+- iconos fijos por cuenta
+- iconos asignables desde el menu de grupo
+- una lista de guilds para activar el pack solo si perteneces a ellas
+
+Ejemplo disponible:
+
+```text
+packs/EZOCustomSupportIcons_Hojablanca/
+```
+
+Para que otros jugadores vean los mismos iconos de un pack, tambien deben tener instalado `EZOCustomSupportIcons` y ese pack.
+
 ## Uso
 
 1. Coloca los `.dds` en `icons/`.
@@ -54,6 +72,8 @@ ESO solo expone posicion fiable para miembros del grupo. El renderer se limita a
 Los iconos sobre la cabeza solo se muestran en escenas HUD (`hud`/`hudui`), no sobre mapa, inventario, menus u otras pantallas.
 
 Los marcadores tacticos reutilizan el mismo renderer y respetan los ajustes globales de visibilidad, tamano y ocultacion en combate.
+
+Los packs complementarios se documentan en `docs/icon-pack-strategy.md`.
 
 ## Desarrollo
 

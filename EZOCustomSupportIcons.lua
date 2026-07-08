@@ -13,6 +13,8 @@ local FADE_DISTANCE_M = 7.5
 local ICONS = {
     ["@zuriplayer"] = "EZOCustomSupportIcons/icons/zuriplayer.dds",
 }
+local iconPacks = {}
+local registeredPlayerIcons = {}
 local TACTICAL_MARKERS = {
     {
         id = "follow",
@@ -46,6 +48,162 @@ for _, marker in ipairs(TACTICAL_MARKERS) do
     TACTICAL_MARKER_BY_ID[marker.id] = marker
 end
 
+local function NormalizeDisplayName(displayName)
+    if type(displayName) ~= "string" or displayName == "" then
+        return nil
+    end
+
+    return string.lower(displayName)
+end
+
+local function NormalizePackId(packId)
+    if type(packId) ~= "string" or packId == "" then
+        return nil
+    end
+
+    return string.lower(packId)
+end
+
+local function NormalizeGuildName(guildName)
+    if type(guildName) ~= "string" or guildName == "" then
+        return nil
+    end
+
+    return string.lower(guildName)
+end
+
+local function IsIconPackEnabledForPlayer(packId)
+    local pack = iconPacks[packId]
+    if not pack or not pack.guilds or #pack.guilds == 0 then
+        return true
+    end
+
+    local guildCount = GetNumGuilds and GetNumGuilds() or 0
+    for guildIndex = 1, guildCount do
+        local guildId = GetGuildId(guildIndex)
+        local guildName = NormalizeGuildName(GetGuildName(guildId))
+        if guildName and pack.guildLookup[guildName] then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function IsTacticalMarkerAvailable(marker)
+    return marker and (not marker.packId or IsIconPackEnabledForPlayer(marker.packId))
+end
+
+local function RegisterPlayerIcon(packId, displayName, texture)
+    local normalizedName = NormalizeDisplayName(displayName)
+    if not normalizedName or type(texture) ~= "string" or texture == "" then
+        return
+    end
+
+    registeredPlayerIcons[normalizedName] = {
+        texture = texture,
+        packId = packId,
+    }
+end
+
+local function RegisterAssignableIcon(packId, packName, iconId, iconData)
+    local sourceId = NormalizePackId(iconId)
+    local texture
+    local label
+
+    if type(iconData) == "string" then
+        texture = iconData
+        label = iconId
+    elseif type(iconData) == "table" then
+        sourceId = NormalizePackId(iconData.id or iconId)
+        texture = iconData.texture
+        label = iconData.label or iconData.name or iconData.id or iconId
+    end
+
+    if not sourceId or type(texture) ~= "string" or texture == "" then
+        return
+    end
+
+    local markerId = packId .. ":" .. sourceId
+    local marker = TACTICAL_MARKER_BY_ID[markerId]
+    if not marker then
+        marker = { id = markerId }
+        table.insert(TACTICAL_MARKERS, marker)
+    end
+
+    marker.label = tostring(label or sourceId)
+    marker.menuLabel = tostring(packName or packId) .. ": " .. marker.label
+    marker.texture = texture
+    marker.packId = packId
+    TACTICAL_MARKER_BY_ID[markerId] = marker
+end
+
+function ADDON.RegisterIconPack(packIdOrData, maybeData)
+    local packData = maybeData or packIdOrData
+    if type(packData) ~= "table" then
+        return false
+    end
+
+    local packId = NormalizePackId(maybeData and packIdOrData or packData.id)
+    if not packId then
+        return false
+    end
+
+    local packName = packData.name or packData.displayName or packId
+    local pack = {
+        id = packId,
+        name = packName,
+        version = packData.version,
+        guilds = {},
+        guildLookup = {},
+    }
+
+    local guilds = packData.guilds
+    if type(guilds) == "string" then
+        guilds = { guilds }
+    elseif type(guilds) ~= "table" and type(packData.guildName) == "string" then
+        guilds = { packData.guildName }
+    end
+
+    if type(guilds) == "table" then
+        for _, guildName in ipairs(guilds) do
+            local normalizedGuildName = NormalizeGuildName(guildName)
+            if normalizedGuildName then
+                table.insert(pack.guilds, guildName)
+                pack.guildLookup[normalizedGuildName] = true
+            end
+        end
+    end
+
+    iconPacks[packId] = pack
+
+    local players = packData.players or packData.uniqueIcons or packData.fixedIcons
+    if type(players) == "table" then
+        for key, value in pairs(players) do
+            if type(value) == "table" then
+                RegisterPlayerIcon(packId, value.displayName or key, value.texture)
+            else
+                RegisterPlayerIcon(packId, key, value)
+            end
+        end
+    end
+
+    local assignableIcons = packData.assignableIcons or packData.icons
+    if type(assignableIcons) == "table" then
+        for _, value in ipairs(assignableIcons) do
+            RegisterAssignableIcon(packId, packName, value.id, value)
+        end
+
+        for key, value in pairs(assignableIcons) do
+            if type(key) ~= "number" then
+                RegisterAssignableIcon(packId, packName, key, value)
+            end
+        end
+    end
+
+    return true
+end
+
 local wm = WINDOW_MANAGER
 local renderControl
 local iconWindow
@@ -74,18 +232,15 @@ local function GetHeadIconSize()
     return tonumber(GetSettings().headIconSize) or DEFAULTS.headIconSize
 end
 
-local function NormalizeDisplayName(displayName)
-    if type(displayName) ~= "string" or displayName == "" then
-        return nil
-    end
-
-    return string.lower(displayName)
-end
-
 local function GetIconForDisplayName(displayName)
     local normalizedName = NormalizeDisplayName(displayName)
     if not normalizedName then
         return nil
+    end
+
+    local registeredIcon = registeredPlayerIcons[normalizedName]
+    if registeredIcon and IsIconPackEnabledForPlayer(registeredIcon.packId) then
+        return registeredIcon.texture
     end
 
     return ICONS[normalizedName]
@@ -101,7 +256,12 @@ local function GetTacticalMarkerForDisplayName(displayName)
         return nil
     end
 
-    return TACTICAL_MARKER_BY_ID[tacticalAssignments[normalizedName]]
+    local marker = TACTICAL_MARKER_BY_ID[tacticalAssignments[normalizedName]]
+    if IsTacticalMarkerAvailable(marker) then
+        return marker
+    end
+
+    return nil
 end
 
 local function GetTacticalMarkerTextureForDisplayName(displayName)
@@ -435,9 +595,11 @@ function ADDON.RegisterGroupContextMenu()
         end
 
         for _, marker in ipairs(TACTICAL_MARKERS) do
-            AddCustomMenuItem("EZO marker: " .. marker.label, function()
-                SetTacticalMarker(displayName, marker.id)
-            end)
+            if IsTacticalMarkerAvailable(marker) then
+                AddCustomMenuItem("EZO marker: " .. (marker.menuLabel or marker.label), function()
+                    SetTacticalMarker(displayName, marker.id)
+                end)
+            end
         end
 
         if GetTacticalMarkerForDisplayName(displayName) then
