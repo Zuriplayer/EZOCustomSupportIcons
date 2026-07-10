@@ -2,8 +2,7 @@
 
 Independent beta addon for *The Elder Scrolls Online* that displays custom support icons for configured players, local tactical group markers, and optional icon packs without depending on `OdySupportIcons`.
 
-Prefer Spanish? Read the [Spanish README](README.es.md).
-
+¿Prefieres español? Lee el [README en español](README.es.md).
 For support, bug reports, feedback or suggestions, join our Discord: https://discord.gg/ekw8zUAcRm
 
 ## Status
