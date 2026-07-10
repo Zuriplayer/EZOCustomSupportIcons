@@ -2,6 +2,7 @@ SavedVariables/
 
 # Local assistant/editor state
 AGENTS.md
+AGENTS.local.md
 .agents/
 .codex/
 .cursor/
@@ -19,6 +20,8 @@ secrets.*
 *.local*
 local/
 private/
+notes.private/
+private-notes/
 scratch/
 tmp/
 temp/

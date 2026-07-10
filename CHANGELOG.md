@@ -2,28 +2,28 @@
 
 ## 0.3.5 - Public beta
 
-- Addon marcado como beta publica.
-- Renderer independiente para iconos sobre jugadores configurados.
-- Soporte de iconos en guild roster.
-- Ajustes LAM para visibilidad, tamano y ocultacion en combate.
-- Marcadores tacticos locales de sesion para miembros del grupo.
-- API publica `EZOCustomSupportIcons.RegisterIconPack(...)` para packs complementarios.
-- Pack de ejemplo `EZOCustomSupportIcons_Hojablanca` incluido como fuente.
+- Marked the addon as public beta.
+- Independent renderer for custom icons above configured players.
+- Guild roster icon support for configured accounts.
+- LibAddonMenu settings for visibility, size and combat hiding.
+- Local, session-only tactical markers for group members.
+- Public `EZOCustomSupportIcons.RegisterIconPack(...)` API for companion icon packs.
+- Source example pack `EZOCustomSupportIcons_Hojablanca`.
 
 ## 0.3.4
 
-- Marcadores tacticos locales desde el menu contextual de grupo en teclado.
-- Visualizacion de marcadores en lista de grupo y lista gamepad.
+- Added local tactical markers from the keyboard group-list context menu.
+- Added tactical marker display in the keyboard and gamepad group lists.
 
 ## 0.3.3
 
-- Restriccion de render a escenas HUD (`hud`/`hudui`).
-- Ocultacion de iconos sobre mapa, inventario y menus.
+- Restricted head-icon rendering to HUD scenes (`hud` / `hudui`).
+- Hid head icons on map, inventory and menu screens.
 
 ## 0.3.2
 
-- Opcion para ocultar iconos en combate manteniendo visibles jugadores muertos.
+- Added an option to hide head icons in combat while keeping dead players visible.
 
 ## 0.3.1
 
-- Conversion a renderer independiente sin dependencia de `OdySupportIcons`.
+- Converted the addon to an independent renderer without `OdySupportIcons`.

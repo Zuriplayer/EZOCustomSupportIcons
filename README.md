@@ -1,120 +1,142 @@
 # EZOCustomSupportIcons
 
-Beta publica de un addon independiente para The Elder Scrolls Online.
+Independent beta addon for *The Elder Scrolls Online* that displays custom support icons for configured players, local tactical group markers, and optional icon packs without depending on `OdySupportIcons`.
 
-`EZOCustomSupportIcons` muestra iconos personalizados propios sobre jugadores concretos sin depender de `OdySupportIcons`, sin modificar otros addons y sin comunicacion online.
+Prefer Spanish? Read the [Spanish README](README.es.md).
 
-## Estado
+For support, bug reports, feedback or suggestions, join our Discord: https://discord.gg/ekw8zUAcRm
 
-- Estado: beta
+## Status
+
+- Status: beta
 - Version: 0.3.5
-- API ESO: 101049 101050
+- ESO API: 101049 101050
 - AddOnVersion: 10012
 
-La beta esta pensada para pruebas manuales en grupo, roster de guild y packs complementarios. Puede cambiar la API publica de packs antes de una version estable.
+This beta is intended for manual testing in groups, guild rosters and companion icon packs. The public icon-pack API may still change before a stable release.
 
-## Requisitos
+## Requirements
 
-- The Elder Scrolls Online para PC.
-- `LibAddonMenu-2.0` opcional, para el panel de ajustes.
-- `LibCustomMenu` opcional, para asignar marcadores desde el menu contextual del grupo en teclado.
+- The Elder Scrolls Online for PC.
+- Optional: `LibAddonMenu-2.0` for the settings panel.
+- Optional: `LibCustomMenu` for assigning tactical markers from the keyboard group-list context menu.
 
-El addon funciona con `OdySupportIcons` desactivado.
+The addon works with `OdySupportIcons` disabled.
 
-## Instalacion
+## Installation
 
-1. Descarga o clona el repositorio.
-2. Copia la carpeta `EZOCustomSupportIcons` en:
+1. Download the latest version from [Releases](../../releases), or clone this repository.
+2. Copy the `EZOCustomSupportIcons` folder into your ESO AddOns folder:
 
 ```text
 Documents/Elder Scrolls Online/live/AddOns/
 ```
 
-3. Asegurate de que el manifiesto queda en:
+3. Make sure the manifest is located at:
 
 ```text
 AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 ```
 
-4. Ejecuta `/reloadui` o reinicia el juego.
+4. Run `/reloadui` or restart the game.
 
-## Funciones principales
+## Implemented Features
 
-- Iconos fijos por cuenta configurados por el addon o por packs complementarios.
-- Overlay 3D propio sobre miembros del grupo visibles en la misma instancia.
-- Icono en guild roster para cuentas configuradas.
-- Ajustes globales en LAM:
-  - mostrar/ocultar iconos sobre cabeza
-  - tamano global del icono
-  - ocultar en combate manteniendo visibles unidades muertas
-- Marcadores tacticos locales de sesion para miembros del grupo:
+- Custom fixed icons for configured account names.
+- A custom 3D overlay above visible group members in the same instance.
+- Guild roster icon replacement for configured accounts.
+- Account-wide SavedVariables only for global visual settings.
+- LibAddonMenu settings, when `LibAddonMenu-2.0` is installed:
+  - `Show head icons`
+  - `Head icon size`
+  - `Hide head icons in combat`
+- Local, session-only tactical markers for current group members:
   - `Follow`
   - `Heal`
   - `Tank`
   - `Focus`
   - `Mechanic`
-- API publica `EZOCustomSupportIcons.RegisterIconPack(...)` para packs complementarios.
+- Keyboard group-list context menu integration through `LibCustomMenu`, when installed.
+- Gamepad group-list display for already assigned tactical markers.
+- Public `EZOCustomSupportIcons.RegisterIconPack(...)` API for companion icon-pack addons.
 
-## Packs complementarios
+## Companion Icon Packs
 
-Los packs son addons independientes con:
+Companion packs are separate addons with:
 
 ```text
 ## DependsOn: EZOCustomSupportIcons
 ```
 
-Pueden registrar iconos fijos por cuenta y catalogos asignables desde el menu de grupo. Los iconos de un pack solo los veran jugadores que tengan instalado el core y ese mismo pack.
+They can register fixed player icons and additional assignable marker icons. Players only see a pack's icons if they have both `EZOCustomSupportIcons` and that same pack installed.
 
-Ejemplo incluido como fuente:
+The repository includes one source example:
 
 ```text
 packs/EZOCustomSupportIcons_Hojablanca/
 ```
 
-Para probarlo en juego, instala ese directorio como addon hermano de `EZOCustomSupportIcons`.
+To test that pack in-game, install it as a sibling addon next to `EZOCustomSupportIcons`.
 
-## Limites de seguridad y privacidad
+## Security and Scope Limits
 
-- No depende de `OdySupportIcons`.
-- No llama APIs `OSI.*`.
-- No envia datos fuera del cliente.
-- No usa servicios externos en runtime.
-- No sincroniza marcadores dinamicos con otros jugadores.
-- Los marcadores tacticos son locales, de sesion y se limpian al salir/cambiar de grupo.
-- Solo se muestran iconos sobre cabeza en escenas HUD (`hud`/`hudui`), no sobre mapa, inventario o menus.
+- Does not depend on `OdySupportIcons`.
+- Does not call `OSI.*` APIs.
+- Does not modify `OdySupportIcons` or any other addon.
+- Does not send data outside the game client.
+- Does not use external services at runtime.
+- Does not automate combat, movement, input, keybinds or gameplay decisions.
+- Does not synchronize dynamic tactical markers with other players.
+- Tactical markers are local, session-only and cleared when leaving or changing group.
+- Head icons are rendered only in HUD scenes (`hud` / `hudui`), not over map, inventory or menus.
+- ESO only exposes reliable world positions for group members; head icons are limited to grouped, visible players in the same valid instance/world context.
 
-## Iconos
+## Icon Files
 
-- Formato recomendado: `.dds`
-- Tamano recomendado: `64x64`
-- Anchura y altura divisibles por 4
-- Canal alpha si necesitas transparencia
+- Recommended format: `.dds`
+- Recommended size: `64x64`
+- Width and height divisible by 4
+- Alpha channel when transparency is needed
 
-Usa solo iconos propios, autorizados, de licencia clara o texturas base de ESO referenciadas por ruta `esoui/...`.
+Use only icons you own, icons you have permission to use, clearly licensed assets, or base ESO textures referenced by `esoui/...` paths.
 
-## Notas de prueba
+## Recommended Testing
 
-Checklist minimo para la beta:
+Minimum beta test checklist:
 
-- `/reloadui` sin errores Lua.
-- En grupo, confirmar iconos sobre jugadores configurados.
-- En guild roster, confirmar iconos de cuentas configuradas.
-- En LAM, probar mostrar/ocultar, tamano y ocultacion en combate.
-- Confirmar que los iconos se ocultan en mapa, inventario y menus.
-- Confirmar que los marcadores tacticos aparecen en cabeza y lista de grupo.
-- Confirmar que los marcadores se limpian al salir del grupo.
-- Confirmar que el addon funciona con `OdySupportIcons` desactivado.
+- `/reloadui` completes without Lua errors.
+- With a configured account in group, the icon appears above the player.
+- In guild roster, the configured account icon appears.
+- In settings, `Show head icons` hides/shows head icons.
+- In settings, `Head icon size` changes icon size.
+- In settings, `Hide head icons in combat` hides icons in combat while dead units remain visible.
+- Tactical marker assignment from the keyboard group-list context menu appears above the target and in the group list.
+- A marker already assigned in keyboard mode appears in the gamepad group list.
+- Tactical markers clear when leaving the group or when the marked player leaves.
+- Head icons are hidden on map, inventory and menu screens.
+- The addon works with `OdySupportIcons` disabled.
 
-## Desarrollo
+There are no language files or localization tables in the current addon, so there is no EN/ES string parity check to run for runtime UI.
 
-Validaciones locales recomendadas:
+## Development Checks
+
+Recommended local checks:
 
 ```powershell
 .\tools\bump-version.ps1 -Check
-.\scripts\ezo\build-addon-package.ps1 -Force
 git diff --check
 ```
 
-## Licencia
+Build/package is available for release preparation:
 
-MIT. Consulta `LICENSE`.
+```powershell
+.\scripts\ezo\build-addon-package.ps1 -Force
+```
+
+Do not generate a package unless you are preparing a build artifact.
+
+## License
+
+MIT - see [LICENSE](LICENSE).
+
+Developed and maintained by Zuriplayer.
