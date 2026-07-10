@@ -1,81 +1,113 @@
 # EZOCustomSupportIcons
 
-Addon de la familia EZO para mostrar iconos personalizados sobre jugadores concretos y en el roster de guild.
+Beta publica de un addon independiente para The Elder Scrolls Online.
 
-No depende de `OdySupportIcons`, no usa su catalogo de iconos y no modifica otros addons.
+`EZOCustomSupportIcons` muestra iconos personalizados propios sobre jugadores concretos sin depender de `OdySupportIcons`, sin modificar otros addons y sin comunicacion online.
+
+## Estado
+
+- Estado: beta
+- Version: 0.3.5
+- API ESO: 101049 101050
+- AddOnVersion: 10012
+
+La beta esta pensada para pruebas manuales en grupo, roster de guild y packs complementarios. Puede cambiar la API publica de packs antes de una version estable.
+
+## Requisitos
+
+- The Elder Scrolls Online para PC.
+- `LibAddonMenu-2.0` opcional, para el panel de ajustes.
+- `LibCustomMenu` opcional, para asignar marcadores desde el menu contextual del grupo en teclado.
+
+El addon funciona con `OdySupportIcons` desactivado.
+
+## Instalacion
+
+1. Descarga o clona el repositorio.
+2. Copia la carpeta `EZOCustomSupportIcons` en:
+
+```text
+Documents/Elder Scrolls Online/live/AddOns/
+```
+
+3. Asegurate de que el manifiesto queda en:
+
+```text
+AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
+```
+
+4. Ejecuta `/reloadui` o reinicia el juego.
+
+## Funciones principales
+
+- Iconos fijos por cuenta configurados por el addon o por packs complementarios.
+- Overlay 3D propio sobre miembros del grupo visibles en la misma instancia.
+- Icono en guild roster para cuentas configuradas.
+- Ajustes globales en LAM:
+  - mostrar/ocultar iconos sobre cabeza
+  - tamano global del icono
+  - ocultar en combate manteniendo visibles unidades muertas
+- Marcadores tacticos locales de sesion para miembros del grupo:
+  - `Follow`
+  - `Heal`
+  - `Tank`
+  - `Focus`
+  - `Mechanic`
+- API publica `EZOCustomSupportIcons.RegisterIconPack(...)` para packs complementarios.
 
 ## Packs complementarios
 
-`EZOCustomSupportIcons` expone una API para packs externos de guild o grupo.
+Los packs son addons independientes con:
 
-Un pack puede registrar:
+```text
+## DependsOn: EZOCustomSupportIcons
+```
 
-- iconos fijos por cuenta
-- iconos asignables desde el menu de grupo
-- una lista de guilds para activar el pack solo si perteneces a ellas
+Pueden registrar iconos fijos por cuenta y catalogos asignables desde el menu de grupo. Los iconos de un pack solo los veran jugadores que tengan instalado el core y ese mismo pack.
 
-Ejemplo disponible:
+Ejemplo incluido como fuente:
 
 ```text
 packs/EZOCustomSupportIcons_Hojablanca/
 ```
 
-Para que otros jugadores vean los mismos iconos de un pack, tambien deben tener instalado `EZOCustomSupportIcons` y ese pack.
+Para probarlo en juego, instala ese directorio como addon hermano de `EZOCustomSupportIcons`.
 
-## Uso
+## Limites de seguridad y privacidad
 
-1. Coloca los `.dds` en `icons/`.
-2. Asocia cada cuenta en la tabla `ICONS` de `EZOCustomSupportIcons.lua`.
-3. Recarga la UI.
-4. En grupo, el icono aparece sobre los jugadores configurados.
-5. En el roster de guild, el icono aparece sobre el indicador de estado de las cuentas configuradas.
+- No depende de `OdySupportIcons`.
+- No llama APIs `OSI.*`.
+- No envia datos fuera del cliente.
+- No usa servicios externos en runtime.
+- No sincroniza marcadores dinamicos con otros jugadores.
+- Los marcadores tacticos son locales, de sesion y se limpian al salir/cambiar de grupo.
+- Solo se muestran iconos sobre cabeza en escenas HUD (`hud`/`hudui`), no sobre mapa, inventario o menus.
 
-## Ajustes
+## Iconos
 
-En `Settings > Addons > EZOCustomSupportIcons`:
-
-- `Show head icons`: activa o desactiva los iconos sobre la cabeza para todas las cuentas configuradas.
-- `Head icon size`: ajusta el tamano de esos iconos para todas las cuentas configuradas.
-- `Hide head icons in combat`: oculta los iconos sobre la cabeza mientras estas en combate, pero mantiene visibles los de jugadores muertos.
-
-## Marcadores tacticos
-
-Desde el menu contextual del listado de grupo en teclado se puede asignar un marcador local de sesion a un miembro del grupo:
-
-- `Follow`
-- `Heal`
-- `Tank`
-- `Focus`
-- `Mechanic`
-
-Estos marcadores solo son visibles para ti, no se guardan en SavedVariables y se limpian al abandonar el grupo o si el jugador marcado deja de estar en el grupo. En gamepad, el listado de grupo muestra el marcador cuando ya esta asignado; la accion de asignacion directa depende del menu nativo de jugador y queda pendiente de integracion segura.
-
-Ejemplo:
-
-```lua
-local ICONS = {
-    ["@zuriplayer"] = "EZOCustomSupportIcons/icons/zuriplayer.dds",
-}
-```
-
-## Formato de iconos
-
-- `.dds`
-- Recomendado: `64x64`
+- Formato recomendado: `.dds`
+- Tamano recomendado: `64x64`
 - Anchura y altura divisibles por 4
 - Canal alpha si necesitas transparencia
 
-## Limitaciones
+Usa solo iconos propios, autorizados, de licencia clara o texturas base de ESO referenciadas por ruta `esoui/...`.
 
-ESO solo expone posicion fiable para miembros del grupo. El renderer se limita a jugadores agrupados y visibles en la misma instancia.
+## Notas de prueba
 
-Los iconos sobre la cabeza solo se muestran en escenas HUD (`hud`/`hudui`), no sobre mapa, inventario, menus u otras pantallas.
+Checklist minimo para la beta:
 
-Los marcadores tacticos reutilizan el mismo renderer y respetan los ajustes globales de visibilidad, tamano y ocultacion en combate.
-
-Los packs complementarios se documentan en `docs/icon-pack-strategy.md`.
+- `/reloadui` sin errores Lua.
+- En grupo, confirmar iconos sobre jugadores configurados.
+- En guild roster, confirmar iconos de cuentas configuradas.
+- En LAM, probar mostrar/ocultar, tamano y ocultacion en combate.
+- Confirmar que los iconos se ocultan en mapa, inventario y menus.
+- Confirmar que los marcadores tacticos aparecen en cabeza y lista de grupo.
+- Confirmar que los marcadores se limpian al salir del grupo.
+- Confirmar que el addon funciona con `OdySupportIcons` desactivado.
 
 ## Desarrollo
+
+Validaciones locales recomendadas:
 
 ```powershell
 .\tools\bump-version.ps1 -Check
@@ -83,8 +115,6 @@ Los packs complementarios se documentan en `docs/icon-pack-strategy.md`.
 git diff --check
 ```
 
-Ruta canonica:
+## Licencia
 
-```text
-\\RZRNAS\Zuriplayer\Dev\EZOCustomSupportIcons
-```
+MIT. Consulta `LICENSE`.
