@@ -25,7 +25,7 @@ El addon funciona con `OdySupportIcons` desactivado.
 
 ## Instalación
 
-1. Descarga la última versión desde [Releases](../../releases), o clona este repositorio.
+1. Clona este repositorio, o usa un paquete ZIP publicado cuando esté disponible.
 2. Copia la carpeta `EZOCustomSupportIcons` dentro de tu carpeta de AddOns de ESO:
 
 ```text
