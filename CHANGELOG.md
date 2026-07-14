@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.7
+
+- Reformatted the LibAddonMenu panel with the shared EZO informational header style.
+- Added English and Spanish LAM text for the settings panel.
+- Moved general settings help to the section header tooltip and kept field-specific help on each control.
+
 ## 0.3.6
 
 - Fixed tactical marker menu callbacks so each entry assigns its own marker reliably.

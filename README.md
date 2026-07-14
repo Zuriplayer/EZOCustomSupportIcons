@@ -2,15 +2,15 @@
 
 Independent beta addon for *The Elder Scrolls Online* that displays custom support icons for configured players, local tactical group markers, and optional icon packs without depending on `OdySupportIcons`.
 
-¿Prefieres español? Lee el [README en español](README.es.md).
+Prefer Spanish? Read the [Spanish README](README.es.md).
 For support, bug reports, feedback or suggestions, join our Discord: https://discord.gg/ekw8zUAcRm
 
 ## Status
 
 - Status: beta
-- Version: 0.3.5
+- Version: 0.3.7
 - ESO API: 101049 101050
-- AddOnVersion: 10012
+- AddOnVersion: 10014
 
 This beta is intended for manual testing in groups, guild rosters and companion icon packs. The public icon-pack API may still change before a stable release.
 
@@ -50,6 +50,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
   - `Show head icons`
   - `Head icon size`
   - `Hide head icons in combat`
+- EZO-style LibAddonMenu presentation with purple informational section headers; general help is attached to the section heading and field-specific help is attached to each setting.
 - Local, session-only tactical markers for current group members:
   - `Follow` using ESO's group-leader icon
   - `Heal`
@@ -111,6 +112,8 @@ Minimum beta test checklist:
 - In settings, `Show head icons` hides/shows head icons.
 - In settings, `Head icon size` changes icon size.
 - In settings, `Hide head icons in combat` hides icons in combat while dead units remain visible.
+- In settings, the `Head icons` section header shows the purple information icon and exposes general section help on hover.
+- In settings, each field exposes its own tooltip on hover.
 - Tactical marker assignment from the keyboard group-list context menu appears above the target and in the group list.
 - A marker already assigned in keyboard mode appears in the gamepad group list.
 - Tactical markers clear when leaving the group or when the marked player leaves.

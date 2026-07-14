@@ -3,14 +3,14 @@
   "addon": {
     "id": "ezocustomsupporticons",
     "name": "EZOCustomSupportIcons",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "status": "beta",
     "phase": "public-beta",
     "visibility": "public",
     "manifest": "EZOCustomSupportIcons.txt",
     "package": {
       "rootFolderName": "EZOCustomSupportIcons",
-      "zipName": "EZOCustomSupportIcons_v0.3.6.zip",
+      "zipName": "EZOCustomSupportIcons_v0.3.7.zip",
       "outputPath": "dist",
       "include": [
         "*.txt",

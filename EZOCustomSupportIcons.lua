@@ -3,6 +3,7 @@ local ADDON = EZOCustomSupportIcons
 
 local ADDON_NAME = "EZOCustomSupportIcons"
 local LOGGER_TAG = ADDON_NAME
+local INFO_HEADER_TEXTURE = "EsoUI/Art/Miscellaneous/help_icon.dds"
 local UPDATE_MS = 10
 local DEFAULTS = {
     headIconsEnabled = true,
@@ -248,6 +249,53 @@ local renderControl
 local iconWindow
 local iconPool = {}
 local tacticalAssignments = {}
+local LAM_STRINGS = {
+    en = {
+        panelDisplayName = "E|cB040FFZ|rOCustomSupportIcons",
+        headIconsHeader = "Head icons",
+        headIconsHeaderTooltip = "Controls the visual icon overlay above configured players and locally marked "
+            .. "group members. These settings only affect display on your client.",
+        showHeadIconsName = "Show head icons",
+        showHeadIconsTooltip = "Show or hide all custom and tactical icons rendered above player characters.",
+        headIconSizeName = "Head icon size",
+        headIconSizeTooltip = "Sets the base size, in UI pixels, for icons rendered above player characters.",
+        hideHeadIconsInCombatName = "Hide head icons in combat",
+        hideHeadIconsInCombatTooltip = "Hide configured head icons while you are in combat. Dead players stay "
+            .. "visible so they can be located.",
+    },
+    es = {
+        panelDisplayName = "E|cB040FFZ|rOCustomSupportIcons",
+        headIconsHeader = "Iconos sobre cabeza",
+        headIconsHeaderTooltip = "Controla el overlay visual de iconos sobre jugadores configurados y miembros "
+            .. "del grupo marcados localmente. Estos ajustes solo afectan a tu cliente.",
+        showHeadIconsName = "Mostrar iconos sobre cabeza",
+        showHeadIconsTooltip = "Muestra u oculta todos los iconos personalizados y tácticos renderizados sobre "
+            .. "personajes jugadores.",
+        headIconSizeName = "Tamaño de icono sobre cabeza",
+        headIconSizeTooltip = "Define el tamaño base, en píxeles de interfaz, de los iconos renderizados sobre "
+            .. "personajes jugadores.",
+        hideHeadIconsInCombatName = "Ocultar iconos en combate",
+        hideHeadIconsInCombatTooltip = "Oculta los iconos configurados sobre la cabeza mientras estás en combate. "
+            .. "Los jugadores muertos siguen visibles para poder localizarlos.",
+    },
+}
+
+local function GetLamStrings()
+    local language = GetCVar and GetCVar("language.2") or "en"
+    return LAM_STRINGS[language] or LAM_STRINGS.en
+end
+
+local function CreateInfoHeader(name, tooltip)
+    return {
+        type = "header",
+        name = zo_strformat(
+            "<<1>> |cB040FF|t26:26:<<2>>:inheritcolor|t|r",
+            tostring(name or ""),
+            INFO_HEADER_TEXTURE
+        ),
+        tooltip = tooltip,
+    }
+end
 
 local function GetSettings()
     ADDON.sv = ADDON.sv or DEFAULTS
@@ -548,11 +596,12 @@ function ADDON.RegisterSettingsPanel()
         return
     end
 
+    local strings = GetLamStrings()
     local panelId = ADDON_NAME .. "Options"
     local panelData = {
         type = "panel",
         name = ADDON_NAME,
-        displayName = "E|cB040FFZ|rOCustomSupportIcons",
+        displayName = strings.panelDisplayName,
         author = "@Zuriplayer",
         version = ADDON.ADDON_VERSION,
         registerForRefresh = true,
@@ -561,14 +610,11 @@ function ADDON.RegisterSettingsPanel()
 
     LAM:RegisterAddonPanel(panelId, panelData)
     LAM:RegisterOptionControls(panelId, {
-        {
-            type = "header",
-            name = "Head icons",
-        },
+        CreateInfoHeader(strings.headIconsHeader, strings.headIconsHeaderTooltip),
         {
             type = "checkbox",
-            name = "Show head icons",
-            tooltip = "Show configured custom icons above player characters.",
+            name = strings.showHeadIconsName,
+            tooltip = strings.showHeadIconsTooltip,
             getFunc = function()
                 return AreHeadIconsEnabled()
             end,
@@ -582,8 +628,8 @@ function ADDON.RegisterSettingsPanel()
         },
         {
             type = "slider",
-            name = "Head icon size",
-            tooltip = "Size of custom icons shown above player characters.",
+            name = strings.headIconSizeName,
+            tooltip = strings.headIconSizeTooltip,
             min = 32,
             max = 256,
             step = 1,
@@ -600,8 +646,8 @@ function ADDON.RegisterSettingsPanel()
         },
         {
             type = "checkbox",
-            name = "Hide head icons in combat",
-            tooltip = "Hide configured head icons while you are in combat. Dead players stay visible so they can be located.",
+            name = strings.hideHeadIconsInCombatName,
+            tooltip = strings.hideHeadIconsInCombatTooltip,
             getFunc = function()
                 return ShouldHideHeadIconsInCombat()
             end,

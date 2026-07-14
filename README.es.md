@@ -2,15 +2,15 @@
 
 Addon independiente en beta para *The Elder Scrolls Online* que muestra iconos personalizados de soporte para jugadores configurados, marcadores tácticos locales de grupo y packs de iconos opcionales sin depender de `OdySupportIcons`.
 
-Prefer English? Read the [README in English](README.md).
+¿Prefieres inglés? Lee el [README en inglés](README.md).
 Para soporte, reportes de errores, comentarios o sugerencias, únete a nuestro Discord: https://discord.gg/ekw8zUAcRm
 
 ## Estado
 
 - Estado: beta
-- Versión: 0.3.5
+- Versión: 0.3.7
 - API de ESO: 101049 101050
-- AddOnVersion: 10012
+- AddOnVersion: 10014
 
 Esta beta está pensada para pruebas manuales en grupo, roster de guild y packs complementarios de iconos. La API pública para packs todavía puede cambiar antes de una versión estable.
 
@@ -47,9 +47,10 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 - Sustitución del icono en el roster de guild para cuentas configuradas.
 - SavedVariables account-wide solo para ajustes visuales globales.
 - Ajustes de LibAddonMenu, cuando `LibAddonMenu-2.0` está instalado:
-  - `Show head icons`
-  - `Head icon size`
-  - `Hide head icons in combat`
+  - `Mostrar iconos sobre cabeza` (`Show head icons` en cliente inglés)
+  - `Tamaño de icono sobre cabeza` (`Head icon size` en cliente inglés)
+  - `Ocultar iconos en combate` (`Hide head icons in combat` en cliente inglés)
+- Presentación LibAddonMenu estilo EZO con cabeceras informativas moradas; la ayuda general está en la cabecera de sección y la ayuda específica está en cada ajuste.
 - Marcadores tácticos locales y solo de sesión para miembros actuales del grupo:
   - `Follow`, usando el icono de líder de grupo de ESO
   - `Heal`
@@ -108,9 +109,11 @@ Checklist mínimo para la beta:
 - `/reloadui` termina sin errores Lua.
 - Con una cuenta configurada en grupo, el icono aparece sobre el jugador.
 - En el roster de guild, aparece el icono de la cuenta configurada.
-- En ajustes, `Show head icons` oculta/muestra los iconos sobre la cabeza.
-- En ajustes, `Head icon size` cambia el tamaño de los iconos.
-- En ajustes, `Hide head icons in combat` oculta iconos en combate, manteniendo visibles las unidades muertas.
+- En ajustes, `Mostrar iconos sobre cabeza` oculta/muestra los iconos sobre la cabeza.
+- En ajustes, `Tamaño de icono sobre cabeza` cambia el tamaño de los iconos.
+- En ajustes, `Ocultar iconos en combate` oculta iconos en combate, manteniendo visibles las unidades muertas.
+- En ajustes, la cabecera `Iconos sobre cabeza` muestra el icono informativo morado y expone la ayuda general de sección al pasar el cursor.
+- En ajustes, cada campo expone su propio tooltip al pasar el cursor.
 - La asignación de marcador táctico desde el menú contextual del listado de grupo en teclado aparece sobre el objetivo y en la lista de grupo.
 - Un marcador ya asignado en modo teclado aparece en la lista de grupo de gamepad.
 - Los marcadores tácticos se limpian al salir del grupo o cuando el jugador marcado abandona el grupo.
