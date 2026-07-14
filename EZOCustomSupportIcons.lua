@@ -2,6 +2,7 @@ EZOCustomSupportIcons = EZOCustomSupportIcons or {}
 local ADDON = EZOCustomSupportIcons
 
 local ADDON_NAME = "EZOCustomSupportIcons"
+local LOGGER_TAG = ADDON_NAME
 local UPDATE_MS = 10
 local DEFAULTS = {
     headIconsEnabled = true,
@@ -19,7 +20,7 @@ local TACTICAL_MARKERS = {
     {
         id = "follow",
         label = "Follow",
-        texture = "esoui/art/icons/mapkey/mapkey_groupleader.dds",
+        texture = "esoui/art/lfg/lfg_leader_icon.dds",
     },
     {
         id = "heal",
@@ -46,6 +47,44 @@ local TACTICAL_MARKER_BY_ID = {}
 
 for _, marker in ipairs(TACTICAL_MARKERS) do
     TACTICAL_MARKER_BY_ID[marker.id] = marker
+end
+
+local function LogInfo(message)
+    if ADDON._debugLoggerUnavailable == true then
+        return false
+    end
+
+    local lib = _G.LibDebugLogger
+    if type(lib) ~= "function" and type(lib) ~= "table" then
+        ADDON._debugLoggerUnavailable = true
+        return false
+    end
+
+    if not ADDON._debugLogger and type(lib) == "function" then
+        local ok, logger = pcall(lib, LOGGER_TAG)
+        if ok then
+            ADDON._debugLogger = logger
+        end
+    end
+    if not ADDON._debugLogger and type(lib) == "table" and type(lib.Create) == "function" then
+        local ok, logger = pcall(function()
+            return lib:Create(LOGGER_TAG)
+        end)
+        if ok then
+            ADDON._debugLogger = logger
+        end
+    end
+
+    local logger = ADDON._debugLogger
+    if logger and type(logger.Info) == "function" then
+        ADDON._debugLoggerUnavailable = false
+        return pcall(function()
+            logger:Info(tostring(message or ""))
+        end)
+    end
+
+    ADDON._debugLoggerUnavailable = true
+    return false
 end
 
 local function NormalizeDisplayName(displayName)
@@ -596,8 +635,10 @@ function ADDON.RegisterGroupContextMenu()
 
         for _, marker in ipairs(TACTICAL_MARKERS) do
             if IsTacticalMarkerAvailable(marker) then
-                AddCustomMenuItem("EZO marker: " .. (marker.menuLabel or marker.label), function()
-                    SetTacticalMarker(displayName, marker.id)
+                local markerId = marker.id
+                local markerLabel = marker.menuLabel or marker.label
+                AddCustomMenuItem("EZO marker: " .. markerLabel, function()
+                    SetTacticalMarker(displayName, markerId)
                 end)
             end
         end
@@ -679,6 +720,9 @@ end
 
 function ADDON.Initialize()
     ADDON.sv = ZO_SavedVars:NewAccountWide("EZOCustomSupportIconsSV", 1, nil, DEFAULTS)
+    ADDON.LogInfo = LogInfo
+    ADDON.DebugLog = LogInfo
+    LogInfo("Initialized.")
 
     renderControl = wm:CreateControl("EZOCustomSupportIconsRenderControl", GuiRoot, CT_CONTROL)
     renderControl:SetAnchorFill(GuiRoot)

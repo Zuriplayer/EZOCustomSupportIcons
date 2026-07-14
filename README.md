@@ -19,6 +19,7 @@ This beta is intended for manual testing in groups, guild rosters and companion 
 - The Elder Scrolls Online for PC.
 - Optional: `LibAddonMenu-2.0` for the settings panel.
 - Optional: `LibCustomMenu` for assigning tactical markers from the keyboard group-list context menu.
+- Optional: `LibDebugLogger` and `DebugLogViewer` for diagnostic logging.
 
 The addon works with `OdySupportIcons` disabled.
 
@@ -50,7 +51,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
   - `Head icon size`
   - `Hide head icons in combat`
 - Local, session-only tactical markers for current group members:
-  - `Follow`
+  - `Follow` using ESO's group-leader icon
   - `Heal`
   - `Tank`
   - `Focus`
@@ -58,6 +59,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 - Keyboard group-list context menu integration through `LibCustomMenu`, when installed.
 - Gamepad group-list display for already assigned tactical markers.
 - Public `EZOCustomSupportIcons.RegisterIconPack(...)` API for companion icon-pack addons.
+- Optional diagnostic logging through `LibDebugLogger`, when installed.
 
 ## Companion Icon Packs
 

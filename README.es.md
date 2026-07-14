@@ -19,6 +19,7 @@ Esta beta está pensada para pruebas manuales en grupo, roster de guild y packs 
 - The Elder Scrolls Online para PC.
 - Opcional: `LibAddonMenu-2.0` para el panel de ajustes.
 - Opcional: `LibCustomMenu` para asignar marcadores tácticos desde el menú contextual del listado de grupo en teclado.
+- Opcional: `LibDebugLogger` y `DebugLogViewer` para diagnóstico mediante logs.
 
 El addon funciona con `OdySupportIcons` desactivado.
 
@@ -50,7 +51,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
   - `Head icon size`
   - `Hide head icons in combat`
 - Marcadores tácticos locales y solo de sesión para miembros actuales del grupo:
-  - `Follow`
+  - `Follow`, usando el icono de líder de grupo de ESO
   - `Heal`
   - `Tank`
   - `Focus`
@@ -58,6 +59,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 - Integración con el menú contextual del listado de grupo en teclado mediante `LibCustomMenu`, cuando está instalado.
 - Visualización en la lista de grupo de gamepad para marcadores tácticos ya asignados.
 - API pública `EZOCustomSupportIcons.RegisterIconPack(...)` para addons complementarios de packs de iconos.
+- Registro diagnóstico opcional mediante `LibDebugLogger`, cuando está instalado.
 
 ## Packs Complementarios de Iconos
 

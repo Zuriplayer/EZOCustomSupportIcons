@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.6
+
+- Fixed tactical marker menu callbacks so each entry assigns its own marker reliably.
+- Switched the built-in `Follow` marker to ESO's group-leader icon for better visibility.
+- Added optional diagnostic logging through `LibDebugLogger`.
+
 ## 0.3.5 - Public beta
 
 - Marked the addon as public beta.
