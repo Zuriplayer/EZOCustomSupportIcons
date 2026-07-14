@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.8
+
+- Registered the complete settings panel in the native `Settings > EZO` hub when EZOCore is available.
+- Kept the standard LibAddonMenu panel as a standalone fallback when EZOCore is absent or rejects registration.
+- Added the permanent EZO Discord feedback link to the settings panel header.
+
 ## 0.3.7
 
 - Reformatted the LibAddonMenu panel with the shared EZO informational header style.

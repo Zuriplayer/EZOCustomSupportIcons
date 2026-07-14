@@ -4,6 +4,7 @@ local ADDON = EZOCustomSupportIcons
 local ADDON_NAME = "EZOCustomSupportIcons"
 local LOGGER_TAG = ADDON_NAME
 local INFO_HEADER_TEXTURE = "EsoUI/Art/Miscellaneous/help_icon.dds"
+local FEEDBACK_URL = "https://discord.gg/ekw8zUAcRm"
 local UPDATE_MS = 10
 local DEFAULTS = {
     headIconsEnabled = true,
@@ -604,12 +605,13 @@ function ADDON.RegisterSettingsPanel()
         displayName = strings.panelDisplayName,
         author = "@Zuriplayer",
         version = ADDON.ADDON_VERSION,
+        ezoStage = "development",
+        feedback = FEEDBACK_URL,
         registerForRefresh = true,
         registerForDefaults = true,
     }
 
-    LAM:RegisterAddonPanel(panelId, panelData)
-    LAM:RegisterOptionControls(panelId, {
+    local options = {
         CreateInfoHeader(strings.headIconsHeader, strings.headIconsHeaderTooltip),
         {
             type = "checkbox",
@@ -662,7 +664,18 @@ function ADDON.RegisterSettingsPanel()
                 return not AreHeadIconsEnabled()
             end,
         },
-    })
+    }
+
+    if EZOCore and type(EZOCore.RegisterSettingsPanel) == "function" then
+        local registered = EZOCore:RegisterSettingsPanel(ADDON_NAME, panelId, panelData, options)
+        if registered then
+            ADDON.ezoSettingsRegistered = true
+            return
+        end
+    end
+
+    ADDON._lamPanel = LAM:RegisterAddonPanel(panelId, panelData)
+    LAM:RegisterOptionControls(panelId, options)
 end
 
 function ADDON.RegisterGroupContextMenu()

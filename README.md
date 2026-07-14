@@ -8,9 +8,9 @@ For support, bug reports, feedback or suggestions, join our Discord: https://dis
 ## Status
 
 - Status: beta
-- Version: 0.3.7
+- Version: 0.3.8
 - ESO API: 101049 101050
-- AddOnVersion: 10014
+- AddOnVersion: 10015
 
 This beta is intended for manual testing in groups, guild rosters and companion icon packs. The public icon-pack API may still change before a stable release.
 
@@ -20,6 +20,7 @@ This beta is intended for manual testing in groups, guild rosters and companion 
 - Optional: `LibAddonMenu-2.0` for the settings panel.
 - Optional: `LibCustomMenu` for assigning tactical markers from the keyboard group-list context menu.
 - Optional: `LibDebugLogger` and `DebugLogViewer` for diagnostic logging.
+- Optional: `EZOCore` for central access through `Settings > EZO`.
 
 The addon works with `OdySupportIcons` disabled.
 
@@ -39,6 +40,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 ```
 
 4. Run `/reloadui` or restart the game.
+5. With EZOCore installed, open Settings > EZO > EZOCustomSupportIcons. Without EZOCore, use the standard Addons settings panel.
 
 ## Implemented Features
 
@@ -51,6 +53,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
   - `Head icon size`
   - `Hide head icons in combat`
 - EZO-style LibAddonMenu presentation with purple informational section headers; general help is attached to the section heading and field-specific help is attached to each setting.
+- Native `Settings > EZO` integration through EZOCore, with the standard LibAddonMenu panel retained as a standalone fallback.
 - Local, session-only tactical markers for current group members:
   - `Follow` using ESO's group-leader icon
   - `Heal`
@@ -114,6 +117,8 @@ Minimum beta test checklist:
 - In settings, `Hide head icons in combat` hides icons in combat while dead units remain visible.
 - In settings, the `Head icons` section header shows the purple information icon and exposes general section help on hover.
 - In settings, each field exposes its own tooltip on hover.
+- With EZOCore active, the panel opens inside `Settings > EZO` and is not duplicated in the standard Addons settings list.
+- Without EZOCore, the same controls remain available through the standard Addons settings panel.
 - Tactical marker assignment from the keyboard group-list context menu appears above the target and in the group list.
 - A marker already assigned in keyboard mode appears in the gamepad group list.
 - Tactical markers clear when leaving the group or when the marked player leaves.

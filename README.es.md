@@ -8,9 +8,9 @@ Para soporte, reportes de errores, comentarios o sugerencias, únete a nuestro D
 ## Estado
 
 - Estado: beta
-- Versión: 0.3.7
+- Versión: 0.3.8
 - API de ESO: 101049 101050
-- AddOnVersion: 10014
+- AddOnVersion: 10015
 
 Esta beta está pensada para pruebas manuales en grupo, roster de guild y packs complementarios de iconos. La API pública para packs todavía puede cambiar antes de una versión estable.
 
@@ -20,6 +20,7 @@ Esta beta está pensada para pruebas manuales en grupo, roster de guild y packs 
 - Opcional: `LibAddonMenu-2.0` para el panel de ajustes.
 - Opcional: `LibCustomMenu` para asignar marcadores tácticos desde el menú contextual del listado de grupo en teclado.
 - Opcional: `LibDebugLogger` y `DebugLogViewer` para diagnóstico mediante logs.
+- Opcional: `EZOCore` para el acceso central mediante `Ajustes > EZO`.
 
 El addon funciona con `OdySupportIcons` desactivado.
 
@@ -39,6 +40,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 ```
 
 4. Ejecuta `/reloadui` o reinicia el juego.
+5. Con EZOCore instalado, abre Ajustes > EZO > EZOCustomSupportIcons. Sin EZOCore, usa el panel estándar de ajustes de Addons.
 
 ## Funciones Implementadas
 
@@ -51,6 +53,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
   - `Tamaño de icono sobre cabeza` (`Head icon size` en cliente inglés)
   - `Ocultar iconos en combate` (`Hide head icons in combat` en cliente inglés)
 - Presentación LibAddonMenu estilo EZO con cabeceras informativas moradas; la ayuda general está en la cabecera de sección y la ayuda específica está en cada ajuste.
+- Integración nativa en `Ajustes > EZO` mediante EZOCore, conservando el panel estándar de LibAddonMenu como fallback independiente.
 - Marcadores tácticos locales y solo de sesión para miembros actuales del grupo:
   - `Follow`, usando el icono de líder de grupo de ESO
   - `Heal`
@@ -114,6 +117,8 @@ Checklist mínimo para la beta:
 - En ajustes, `Ocultar iconos en combate` oculta iconos en combate, manteniendo visibles las unidades muertas.
 - En ajustes, la cabecera `Iconos sobre cabeza` muestra el icono informativo morado y expone la ayuda general de sección al pasar el cursor.
 - En ajustes, cada campo expone su propio tooltip al pasar el cursor.
+- Con EZOCore activo, el panel se abre dentro de `Ajustes > EZO` y no se duplica en la lista estándar de ajustes de Addons.
+- Sin EZOCore, los mismos controles siguen disponibles mediante el panel estándar de ajustes de Addons.
 - La asignación de marcador táctico desde el menú contextual del listado de grupo en teclado aparece sobre el objetivo y en la lista de grupo.
 - Un marcador ya asignado en modo teclado aparece en la lista de grupo de gamepad.
 - Los marcadores tácticos se limpian al salir del grupo o cuando el jugador marcado abandona el grupo.
