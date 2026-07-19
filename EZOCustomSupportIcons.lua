@@ -89,6 +89,42 @@ local function LogInfo(message)
     return false
 end
 
+local function GetClientLanguage()
+    if type(GetCVar) == "function" then
+        local language = zo_strlower(tostring(GetCVar("language.2") or ""))
+        local prefix = language:sub(1, 2)
+        if prefix == "es" then return "es" end
+        if prefix == "en" then return "en" end
+    end
+
+    return "en"
+end
+
+local function IsLanguageManagedByEZOCore()
+    if not (EZOCore and type(EZOCore.IsLanguageGloballyManaged) == "function") then
+        return false
+    end
+
+    local ok, managed = pcall(function()
+        return EZOCore:IsLanguageGloballyManaged()
+    end)
+
+    return ok and managed == true
+end
+
+local function GetEffectiveLanguage()
+    if IsLanguageManagedByEZOCore() then
+        local ok, inherited = pcall(function()
+            return EZOCore:GetLanguage()
+        end)
+        if ok and (inherited == "es" or inherited == "en") then
+            return inherited
+        end
+    end
+
+    return GetClientLanguage()
+end
+
 local function NormalizeDisplayName(displayName)
     if type(displayName) ~= "string" or displayName == "" then
         return nil
@@ -282,7 +318,7 @@ local LAM_STRINGS = {
 }
 
 local function GetLamStrings()
-    local language = GetCVar and GetCVar("language.2") or "en"
+    local language = GetEffectiveLanguage()
     return LAM_STRINGS[language] or LAM_STRINGS.en
 end
 

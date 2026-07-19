@@ -1,8 +1,8 @@
 ## Title: E|cB040FFZ|rOCustomSupportIcons
 ## Author: @Zuriplayer
-## Description: Independent custom support icons for selected ESO accounts.
-## Version: 0.3.8
-## AddOnVersion: 10015
+## Description: Independent custom support icons for selected ESO accounts. Optional add-ons: LibAddonMenu-2.0, LibCustomMenu, LibDebugLogger, DebugLogViewer, EZOCore.
+## Version: 0.3.9
+## AddOnVersion: 10016
 ## APIVersion: 101049 101050
 ## OptionalDependsOn: LibAddonMenu-2.0 LibCustomMenu LibDebugLogger DebugLogViewer EZOCore
 ## SavedVariables: EZOCustomSupportIconsSV

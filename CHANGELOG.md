@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.9
+
+- Inherits the shared language from EZOCore when global language management is enabled.
+- Falls back to the ESO client language when EZOCore is absent or language management is local.
+- Lists optional menu, diagnostics, and EZOCore integrations in the manifest description.
+
 ## 0.3.8
 
 - Registered the complete settings panel in the native `Settings > EZO` hub when EZOCore is available.
