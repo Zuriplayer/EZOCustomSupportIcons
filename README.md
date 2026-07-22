@@ -47,7 +47,7 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 - Custom fixed icons for configured account names.
 - A custom 3D overlay above visible group members in the same instance.
 - Guild roster icon replacement for configured accounts.
-- Account-wide SavedVariables only for global visual settings.
+- SavedVariables follow the EZOCore preference scope selector for visual settings, with account-wide storage retained when EZOCore is absent or configured for account preferences.
 - LibAddonMenu settings, when `LibAddonMenu-2.0` is installed:
   - `Show head icons`
   - `Head icon size`

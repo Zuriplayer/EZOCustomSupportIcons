@@ -5,6 +5,7 @@
 - Inherits the shared language from EZOCore when global language management is enabled.
 - Falls back to the ESO client language when EZOCore is absent or language management is local.
 - Lists optional menu, diagnostics, and EZOCore integrations in the manifest description.
+- Visual settings now follow EZOCore's account-or-character preference scope selector, copying existing account settings into the character profile once when character scope is first used.
 
 ## 0.3.8
 

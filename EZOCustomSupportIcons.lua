@@ -6,6 +6,9 @@ local LOGGER_TAG = ADDON_NAME
 local INFO_HEADER_TEXTURE = "EsoUI/Art/Miscellaneous/help_icon.dds"
 local FEEDBACK_URL = "https://discord.gg/ekw8zUAcRm"
 local UPDATE_MS = 10
+local SAVED_VARIABLES_NAME = "EZOCustomSupportIconsSV"
+local SAVED_VARIABLES_VERSION = 1
+local MIGRATION_MARKER = "__ezoPreferenceScopeMigrated"
 local DEFAULTS = {
     headIconsEnabled = true,
     hideHeadIconsInCombat = false,
@@ -49,6 +52,56 @@ local TACTICAL_MARKER_BY_ID = {}
 
 for _, marker in ipairs(TACTICAL_MARKERS) do
     TACTICAL_MARKER_BY_ID[marker.id] = marker
+end
+
+local function DeepCopy(src)
+    if type(src) ~= "table" then
+        return src
+    end
+
+    local out = {}
+    for key, value in pairs(src) do
+        out[key] = DeepCopy(value)
+    end
+    return out
+end
+
+local function ApplyDefaults(target, defaults)
+    if type(target) ~= "table" or type(defaults) ~= "table" then
+        return
+    end
+
+    for key, value in pairs(defaults) do
+        if target[key] == nil then
+            target[key] = DeepCopy(value)
+        elseif type(target[key]) == "table" and type(value) == "table" then
+            ApplyDefaults(target[key], value)
+        end
+    end
+end
+
+local function CopySavedValues(target, source)
+    if type(target) ~= "table" or type(source) ~= "table" then
+        return
+    end
+
+    for key, value in pairs(source) do
+        if key ~= MIGRATION_MARKER then
+            target[key] = DeepCopy(value)
+        end
+    end
+end
+
+local function GetPreferenceScope()
+    if EZOCore and type(EZOCore.GetPreferenceScope) == "function" then
+        local ok, scope = pcall(function()
+            return EZOCore:GetPreferenceScope("ezocustomsupporticons", "settings")
+        end)
+        if ok and scope == "character" then
+            return "character"
+        end
+    end
+    return "account"
 end
 
 local function LogInfo(message)
@@ -814,7 +867,28 @@ function ADDON.RegisterGroupEvents()
 end
 
 function ADDON.Initialize()
-    ADDON.sv = ZO_SavedVars:NewAccountWide("EZOCustomSupportIconsSV", 1, nil, DEFAULTS)
+    local scope = GetPreferenceScope()
+    ADDON.preferenceScope = scope
+
+    if scope == "character" then
+        ADDON.sv = ZO_SavedVars:NewCharacterIdSettings(
+            SAVED_VARIABLES_NAME,
+            SAVED_VARIABLES_VERSION,
+            nil,
+            DEFAULTS)
+        if type(ADDON.sv) == "table" and ADDON.sv[MIGRATION_MARKER] ~= true then
+            local accountSv = ZO_SavedVars:NewAccountWide(
+                SAVED_VARIABLES_NAME,
+                SAVED_VARIABLES_VERSION,
+                nil,
+                nil)
+            CopySavedValues(ADDON.sv, accountSv)
+            ADDON.sv[MIGRATION_MARKER] = true
+        end
+    else
+        ADDON.sv = ZO_SavedVars:NewAccountWide(SAVED_VARIABLES_NAME, SAVED_VARIABLES_VERSION, nil, DEFAULTS)
+    end
+    ApplyDefaults(ADDON.sv, DEFAULTS)
     ADDON.LogInfo = LogInfo
     ADDON.DebugLog = LogInfo
     LogInfo("Initialized.")
