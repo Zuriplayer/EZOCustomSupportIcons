@@ -44,3 +44,7 @@ scripts/ezo/publish-*.ps1
 *.swo
 Thumbs.db
 .DS_Store
+
+# Keep shared AI project instructions versioned.
+!AGENTS.md
+!CLAUDE.md
