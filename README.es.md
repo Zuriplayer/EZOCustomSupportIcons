@@ -8,9 +8,9 @@ Para soporte, reportes de errores, comentarios o sugerencias, únete a nuestro D
 ## Estado
 
 - Estado: beta
-- Versión: 0.3.8
+- Versión: 0.3.10
 - API de ESO: 101049 101050
-- AddOnVersion: 10015
+- AddOnVersion: 10017
 
 Esta beta está pensada para pruebas manuales en grupo, roster de guild y packs complementarios de iconos. La API pública para packs todavía puede cambiar antes de una versión estable.
 
@@ -63,6 +63,11 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 - Integración con el menú contextual del listado de grupo en teclado mediante `LibCustomMenu`, cuando está instalado.
 - Visualización en la lista de grupo de gamepad para marcadores tácticos ya asignados.
 - API pública `EZOCustomSupportIcons.RegisterIconPack(...)` para addons complementarios de packs de iconos.
+- API pública `EZOCustomSupportIcons.RegisterWorldOverlayProvider(...)` para addons complementarios que necesiten
+  renderizar overlays locales del mundo usando la misma proyección de cámara y ventana HUD superior.
+- Los proveedores registrados reciben `(camera, overlayWindow)` en cada tick de renderizado; `camera` es `nil` fuera de
+  escenas HUD/HUD_UI para que puedan ocultar sus controles. Así `EZOGroupFrames` puede dibujar marcadores de rol en un
+  carril vertical separado sin crear un segundo bucle de proyección.
 - Registro diagnóstico opcional mediante `LibDebugLogger`, cuando está instalado.
 
 ## Packs Complementarios de Iconos
@@ -92,6 +97,8 @@ Para probar ese pack en el juego, instálalo como addon hermano junto a `EZOCust
 - No usa servicios externos en runtime.
 - No automatiza combate, movimiento, input, keybindings ni decisiones de juego.
 - No sincroniza marcadores tácticos dinámicos con otros jugadores.
+- La API de proveedores de overlay es local y no intercambia datos entre clientes; cada proveedor sigue siendo
+  responsable de su visibilidad, elegibilidad de unidades y contenido visual.
 - Los marcadores tácticos son locales, solo de sesión y se limpian al salir o cambiar de grupo.
 - Los iconos sobre la cabeza solo se renderizan en escenas HUD (`hud` / `hudui`), no sobre mapa, inventario ni menús.
 - ESO solo expone posiciones de mundo fiables para miembros del grupo; los iconos sobre la cabeza se limitan a jugadores agrupados y visibles en un contexto válido de instancia/mundo.
@@ -124,6 +131,8 @@ Checklist mínimo para la beta:
 - Los marcadores tácticos se limpian al salir del grupo o cuando el jugador marcado abandona el grupo.
 - Los iconos sobre la cabeza se ocultan en mapa, inventario y pantallas de menú.
 - El addon funciona con `OdySupportIcons` desactivado.
+- Con EZOGroupFrames instalado, comprueba que su overlay opcional de tanques/healers permanece separado visualmente
+  de los iconos sobre cabeza personalizados y tácticos.
 
 El addon actual no tiene archivos de idioma ni tablas de localización, así que no hay una comprobación de paridad EN/ES que ejecutar para la UI runtime.
 

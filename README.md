@@ -8,9 +8,9 @@ For support, bug reports, feedback or suggestions, join our Discord: https://dis
 ## Status
 
 - Status: beta
-- Version: 0.3.8
+- Version: 0.3.10
 - ESO API: 101049 101050
-- AddOnVersion: 10015
+- AddOnVersion: 10017
 
 This beta is intended for manual testing in groups, guild rosters and companion icon packs. The public icon-pack API may still change before a stable release.
 
@@ -63,6 +63,11 @@ AddOns/EZOCustomSupportIcons/EZOCustomSupportIcons.txt
 - Keyboard group-list context menu integration through `LibCustomMenu`, when installed.
 - Gamepad group-list display for already assigned tactical markers.
 - Public `EZOCustomSupportIcons.RegisterIconPack(...)` API for companion icon-pack addons.
+- Public `EZOCustomSupportIcons.RegisterWorldOverlayProvider(...)` API for companion addons that need to render local
+  world overlays through the same camera projection and top-level HUD window.
+- Registered world-overlay providers receive `(camera, overlayWindow)` every render tick; `camera` is `nil` outside
+  HUD/HUD_UI scenes so providers can hide their controls. This lets `EZOGroupFrames` render role markers in a
+  separate vertical lane without creating a second projection loop.
 - Optional diagnostic logging through `LibDebugLogger`, when installed.
 
 ## Companion Icon Packs
@@ -92,6 +97,8 @@ To test that pack in-game, install it as a sibling addon next to `EZOCustomSuppo
 - Does not use external services at runtime.
 - Does not automate combat, movement, input, keybinds or gameplay decisions.
 - Does not synchronize dynamic tactical markers with other players.
+- The world-overlay provider API is local and does not exchange data between clients; providers remain responsible for
+  their own visibility, unit eligibility and visual content.
 - Tactical markers are local, session-only and cleared when leaving or changing group.
 - Head icons are rendered only in HUD scenes (`hud` / `hudui`), not over map, inventory or menus.
 - ESO only exposes reliable world positions for group members; head icons are limited to grouped, visible players in the same valid instance/world context.
@@ -124,6 +131,8 @@ Minimum beta test checklist:
 - Tactical markers clear when leaving the group or when the marked player leaves.
 - Head icons are hidden on map, inventory and menu screens.
 - The addon works with `OdySupportIcons` disabled.
+- With EZOGroupFrames installed, verify its optional tank/healer role overlay remains visually separated from custom
+  and tactical head icons.
 
 There are no language files or localization tables in the current addon, so there is no EN/ES string parity check to run for runtime UI.
 

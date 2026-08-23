@@ -339,6 +339,7 @@ local renderControl
 local iconWindow
 local iconPool = {}
 local tacticalAssignments = {}
+local worldOverlayProviders = {}
 local LAM_STRINGS = {
     en = {
         panelDisplayName = "E|cB040FFZ|rOCustomSupportIcons",
@@ -585,6 +586,43 @@ local function GetConfiguredTexture(unitTag)
     return GetTacticalMarkerTextureForDisplayName(displayName) or GetIconForDisplayName(displayName)
 end
 
+function ADDON.RegisterWorldOverlayProvider(providerId, provider)
+    if type(providerId) ~= "string" or providerId == "" then
+        return false
+    end
+    if type(provider) ~= "table" or type(provider.OnUpdate) ~= "function" then
+        return false
+    end
+
+    worldOverlayProviders[string.lower(providerId)] = provider
+    return true
+end
+
+function ADDON.UnregisterWorldOverlayProvider(providerId)
+    if type(providerId) ~= "string" or providerId == "" then
+        return false
+    end
+
+    local normalizedId = string.lower(providerId)
+    if worldOverlayProviders[normalizedId] == nil then
+        return false
+    end
+
+    worldOverlayProviders[normalizedId] = nil
+    return true
+end
+
+local function UpdateWorldOverlayProviders(camera)
+    for providerId, provider in pairs(worldOverlayProviders) do
+        if type(provider.OnUpdate) == "function" then
+            local ok, errorMessage = pcall(provider.OnUpdate, camera, iconWindow)
+            if not ok then
+                LogInfo("World overlay provider failed (" .. tostring(providerId) .. "): " .. tostring(errorMessage))
+            end
+        end
+    end
+end
+
 local function ProjectUnit(unitTag, texture, camera)
     local _, worldX, worldY, worldZ = GetUnitRawWorldPosition(unitTag)
     worldY = worldY + ICON_OFFSET_M * 100
@@ -650,34 +688,35 @@ end
 function ADDON.OnUpdate()
     HideAllIcons()
 
-    if not IsHudSceneShowing() then
-        return
-    end
+    local camera
+    if IsHudSceneShowing() then
+        camera = GetCamera()
 
-    if not AreHeadIconsEnabled() then
-        return
-    end
+        if AreHeadIconsEnabled() then
+            local playerTexture = GetConfiguredTexture("player")
 
-    local playerTexture = GetConfiguredTexture("player")
-    local camera = GetCamera()
+            if playerTexture and CanShowPlayer() and ShouldShowHeadIconForUnit("player") then
+                ProjectUnit("player", playerTexture, camera)
+            end
 
-    if playerTexture and CanShowPlayer() and ShouldShowHeadIconForUnit("player") then
-        ProjectUnit("player", playerTexture, camera)
-    end
-
-    if not IsUnitGrouped("player") then
-        return
-    end
-
-    for i = 1, GROUP_SIZE_MAX do
-        local unitTag = "group" .. i
-        if not AreUnitsEqual("player", unitTag) and CanShowUnit(unitTag) and ShouldShowHeadIconForUnit(unitTag) then
-            local texture = GetConfiguredTexture(unitTag)
-            if texture then
-                ProjectUnit(unitTag, texture, camera)
+            if IsUnitGrouped("player") then
+                for i = 1, GROUP_SIZE_MAX do
+                    local unitTag = "group" .. i
+                    if not AreUnitsEqual("player", unitTag)
+                        and CanShowUnit(unitTag)
+                        and ShouldShowHeadIconForUnit(unitTag)
+                    then
+                        local texture = GetConfiguredTexture(unitTag)
+                        if texture then
+                            ProjectUnit(unitTag, texture, camera)
+                        end
+                    end
+                end
             end
         end
     end
+
+    UpdateWorldOverlayProviders(camera)
 end
 
 function ADDON.RegisterSettingsPanel()

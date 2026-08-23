@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.10 - Shared World Overlay Providers
+
+- Adds the local `RegisterWorldOverlayProvider(...)` API for companion HUD overlays.
+- Supplies registered providers with the shared camera projection and overlay window while preserving the existing
+  custom/tactical icon rendering behavior.
+
 ## 0.3.9
 
 - Inherits the shared language from EZOCore when global language management is enabled.
