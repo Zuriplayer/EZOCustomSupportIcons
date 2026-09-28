@@ -8,9 +8,9 @@ Para soporte, reportes de errores, comentarios o sugerencias, únete a nuestro D
 ## Estado
 
 - Estado: beta
-- Versión: 0.3.10
-- API de ESO: 101049 101050
-- AddOnVersion: 10017
+- Versión: 0.3.11
+- API de ESO: 101051
+- AddOnVersion: 10018
 
 Esta beta está pensada para pruebas manuales en grupo, roster de guild y packs complementarios de iconos. La API pública para packs todavía puede cambiar antes de una versión estable.
 

@@ -8,9 +8,9 @@ For support, bug reports, feedback or suggestions, join our Discord: https://dis
 ## Status
 
 - Status: beta
-- Version: 0.3.10
-- ESO API: 101049 101050
-- AddOnVersion: 10017
+- Version: 0.3.11
+- ESO API: 101051
+- AddOnVersion: 10018
 
 This beta is intended for manual testing in groups, guild rosters and companion icon packs. The public icon-pack API may still change before a stable release.
 

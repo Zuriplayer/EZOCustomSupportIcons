@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.11
+
+- Updates the addon and Hojablanca pack manifests for ESO API 101051.
+
 ## 0.3.10 - Shared World Overlay Providers
 
 - Adds the local `RegisterWorldOverlayProvider(...)` API for companion HUD overlays.
